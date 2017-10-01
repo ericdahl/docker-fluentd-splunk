@@ -1,0 +1,2 @@
+- splunk events via fluentd aren't tagged correctly (uses `log` string)
+- different fluentd splunk plugin?
