@@ -1,0 +1,30 @@
+version: '3'
+services:
+  splunk:
+    build: "splunk"
+    environment:
+      SPLUNK_START_ARGS: "--accept-license"
+      SPLUNK_USER: "root"
+    ports:
+      - "8000:8000"
+      - "8088:8088" # http event collector
+  webapp:
+    build: "webapp"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - splunk
+    logging:
+      driver: "splunk"
+      options:
+        splunk-token: "a8a90ab2-55f1-4322-9788-fe0e6252d92b"
+        splunk-url: 'http://localhost:8088'
+
+
+
+
+
+#    environment:
+#      SFLY_LOG_CONSOLE_APP_FORMAT: "json"
+#      SFLY_LOG_CONSOLE_ACCESS_FORMAT: "json"
+
