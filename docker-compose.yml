@@ -8,18 +8,38 @@ services:
     ports:
       - "8000:8000"
       - "8088:8088" # http event collector
+
+  es:
+    build: "elasticsearch"
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      "discovery.type": "single-node"
+      "xpack.security.enabled": "false"
+
+  fluentd:
+    build: "fluentd"
+    ports:
+      - "24224:24224"
+
   webapp:
     build: "webapp"
     ports:
       - "8080:8080"
     depends_on:
-      - splunk
+      - fluentd
     logging:
-      driver: "splunk"
+      driver: "fluentd"
       options:
-        splunk-token: "bb3714bf-b59c-4971-94b7-30c9244c803a"
-#        splunk-url: 'http://splunk:8088'
-        splunk-url: 'http://localhost:8088'
-        splunk-verify-connection: 'false'
-        splunk-sourcetype: '_json'
-        splunk-format: 'json'
+        fluentd-address: "localhost:24224"
+        fluentd-async-connect: "true"
+#    logging:
+#      driver: "splunk"
+#      options:
+#        splunk-token: "bb3714bf-b59c-4971-94b7-30c9244c803a"
+##        splunk-url: 'http://splunk:8088'
+#        splunk-url: 'http://localhost:8088'
+#        splunk-verify-connection: 'false'
+#        splunk-sourcetype: '_json'
+#        splunk-format: 'json'
